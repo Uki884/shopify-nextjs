@@ -4,10 +4,12 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon",
-    "build": "next build",
-    "start": "next start"
+    "build": "npm run build:client && npm run build:server",
+    "build:client": "next build",
+    "build:server": "cd server/ && tsc",
+    "prestart": "sudo cp -R .next/ dist/.next",
+    "start": "node dist/index.js"
   },
   "keywords": [],
   "author": "",

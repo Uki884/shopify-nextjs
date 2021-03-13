@@ -4,9 +4,10 @@ import Router from "koa-router";
 import session from "koa-session";
 import dotenv from "dotenv";
 import cors from '@koa/cors'
-import shopifyAuth from '@/server/middlewares/shopifyAuth'
+import shopifyAuth from './middlewares/shopifyAuth'
 import { verifyRequest } from '@shopify/koa-shopify-auth'
 import bodyParser from 'koa-bodyparser'
+import path from "path";
 
 dotenv.config();
 
@@ -14,7 +15,8 @@ const port = process.env.PORT || '3000'
 const dev = process.env.NODE_ENV !== "production";
 
 const app = next({
-  dev
+  dev,
+  dir: path.join( __dirname, '../src'),
 });
 
 const handle = app.getRequestHandler();

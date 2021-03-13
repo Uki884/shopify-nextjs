@@ -1,0 +1,51 @@
+version: "3"
+
+services:
+  db:
+    image: postgres:12.4-alpine
+    tty: true
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: shopify_db
+      POSTGRES_INITDB_ARGS: --data-checksums
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+  https-portal:
+    image: steveltn/https-portal:1
+    ports:
+      - '80:80'
+      - '443:443'
+    restart: always
+    environment:
+      DOMAINS: '${APP_DOMAIN} -> http://app:8081'
+      STAGE: ${APP_STAGE}
+      CLIENT_MAX_BODY_SIZE: 100M
+      # FORCE_RENEW: 'true'
+  app:
+    build: .
+    environment:
+      SHOP: ${SHOP}
+      SHOPIFY_API_KEY: ${SHOPIFY_API_KEY}
+      SHOPIFY_API_SECRET: ${SHOPIFY_API_SECRET}
+      SCOPES: ${SCOPES}
+      HOST: ${HOST}
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+    ports:
+      - "8081:8081"
+    volumes:
+      - .:/app
+      - node_modules:/app/node_modules
+    restart: always
+
+volumes:
+  pgdata:
+  node_modules:
